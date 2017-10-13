@@ -1,0 +1,63 @@
+
+## Use: nmake -f makefile.msc install
+
+# Nothing much configurable below
+
+TOPDIR = .\..\..\..\..
+srcdir = $(TOPDIR)\..\sql\backends\monet5\UDF
+!INCLUDE $(TOPDIR)\..\NT\rules.msc
+all: build-all
+check: check-recursive check-msc
+install: install-recursive install-msc
+INCLUDES = -I$(srcdir)
+cudf-1-all: "cudf-1-dir" "cudf-1-Makefile"
+	$(CD) "cudf" && $(MAKE) /nologo $(MAKEDEBUG) "prefix=$(prefix)" "bits=$(bits)" all 
+cudf-1-dir: 
+	if not exist "cudf" $(MKDIR) "cudf"
+cudf-1-Makefile: "$(srcdir)\cudf\Makefile.msc"
+	$(INSTALL) "$(srcdir)\cudf\Makefile.msc" "cudf\Makefile"
+cudf-1-check:
+	$(CD) "cudf" && $(MAKE) /nologo $(MAKEDEBUG) "prefix=$(prefix)" "bits=$(bits)" check
+cudf-1-install:
+	$(CD) "cudf" && $(MAKE) /nologo $(MAKEDEBUG) "prefix=$(prefix)" "bits=$(bits)" install
+!IFDEF HAVE_LIBPY
+HAVE_LIBPY-2-all: "HAVE_LIBPY-2-dir" "HAVE_LIBPY-2-Makefile"
+	$(CD) "pyapi" && $(MAKE) /nologo $(MAKEDEBUG) "prefix=$(prefix)" "bits=$(bits)" all 
+HAVE_LIBPY-2-dir: 
+	if not exist "pyapi" $(MKDIR) "pyapi"
+HAVE_LIBPY-2-Makefile: "$(srcdir)\pyapi\Makefile.msc"
+	$(INSTALL) "$(srcdir)\pyapi\Makefile.msc" "pyapi\Makefile"
+HAVE_LIBPY-2-check:
+	$(CD) "pyapi" && $(MAKE) /nologo $(MAKEDEBUG) "prefix=$(prefix)" "bits=$(bits)" check
+HAVE_LIBPY-2-install:
+	$(CD) "pyapi" && $(MAKE) /nologo $(MAKEDEBUG) "prefix=$(prefix)" "bits=$(bits)" install
+!ELSE
+HAVE_LIBPY-2-all:
+HAVE_LIBPY-2-check:
+HAVE_LIBPY-2-install:
+!ENDIF
+!IFDEF HAVE_LIBPY3
+HAVE_LIBPY3-3-all: "HAVE_LIBPY3-3-dir" "HAVE_LIBPY3-3-Makefile"
+	$(CD) "pyapi3" && $(MAKE) /nologo $(MAKEDEBUG) "prefix=$(prefix)" "bits=$(bits)" all 
+HAVE_LIBPY3-3-dir: 
+	if not exist "pyapi3" $(MKDIR) "pyapi3"
+HAVE_LIBPY3-3-Makefile: "$(srcdir)\pyapi3\Makefile.msc"
+	$(INSTALL) "$(srcdir)\pyapi3\Makefile.msc" "pyapi3\Makefile"
+HAVE_LIBPY3-3-check:
+	$(CD) "pyapi3" && $(MAKE) /nologo $(MAKEDEBUG) "prefix=$(prefix)" "bits=$(bits)" check
+HAVE_LIBPY3-3-install:
+	$(CD) "pyapi3" && $(MAKE) /nologo $(MAKEDEBUG) "prefix=$(prefix)" "bits=$(bits)" install
+!ELSE
+HAVE_LIBPY3-3-all:
+HAVE_LIBPY3-3-check:
+HAVE_LIBPY3-3-install:
+!ENDIF
+all-recursive: "cudf-1-all" "HAVE_LIBPY-2-all" "HAVE_LIBPY3-3-all" 
+check-recursive: "cudf-1-check" "HAVE_LIBPY-2-check" "HAVE_LIBPY3-3-check" 
+install-recursive: "cudf-1-install" "HAVE_LIBPY-2-install" "HAVE_LIBPY3-3-install" 
+build-all: $(BUILT_SOURCES) all-recursive all-msc
+all-msc:
+check-msc: all-msc
+install-msc: install-exec install-data
+install-exec:  
+install-data:
