@@ -17,6 +17,15 @@ intermediate data structures (BAT in this case) instead of base column storage.
 
 The first milestone is that, ByteStore supports SQL and all the scan implementations are using `ByteSlice-Scan`.
 
+To do that, we need to add a *ByteSlice storage manager* besides its original BAT storage manager. The  reason we do not remove its original storage manager is that, operators like join and aggregate still use BAT as input.
+
+I suggest the following to-do list in the next two weeks:
+
+1. Compile/build the source code, and play with MonetDB to get familiar with its interface/commands (maybe you've already done this:).
+
+2. When loading the tables into MonetDB, try to trace the source code using gdb to find those functions about BAT creation. The reason is that, we need to create ByteSlice storage along with BAT in those functions.
+
+3. Along with Step 2, you may also need to understand BAT pool management mechanism, because we may need to implement our ByteSlice pool management.
 
 
 
